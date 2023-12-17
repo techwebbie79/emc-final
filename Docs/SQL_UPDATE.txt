@@ -1,0 +1,2 @@
+10/08/2022(Khalid)
+ALTER TABLE `users` ADD `citizen_nid` VARCHAR(20) NULL DEFAULT NULL AFTER `citizen_id`;

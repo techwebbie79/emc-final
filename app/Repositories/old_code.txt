@@ -1,0 +1,957 @@
+ // $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->where('district_id', user_district())->count();
+            // $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->where('district_id', user_district())->count();
+            // $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->where('district_id', user_district())->count();
+            // $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->where('district_id', user_district())->count();
+            // $data['total_user'] = DB::table('users')->count();
+            // $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            // $data['total_mouja'] = DB::table('mouja')->count();
+            // $data['total_ct'] = DB::table('case_type')->count();
+
+            // Drildown Statistics
+          
+            // CRPC Section Statistics
+            // $crpc_section_list = DB::table('crpc_sections')
+            //     ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+            //     ->get();
+
+            // $crpcdata = array();
+            // // Division List
+            // foreach ($crpc_section_list as $crpc) {
+            //     // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+            //     // Division Data
+            //     $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            // }
+
+            $data['notifications'] = EmAppeal::orderby('id', 'desc')->whereIn('appeal_status', ['ON_TRIAL_DM', 'SEND_TO_DM'])->where('district_id', user_district())->count();
+
+             // $data['pending_review_case'] = EmAppeal::whereIn('appeal_status', ['SEND_TO_DM_REVIEW'])->where('district_id', user_district())->count();
+
+             // $data['running_review_case'] = EmAppeal::whereIn('appeal_status', ['ON_TRIAL_DM'])->where('is_applied_for_review', 1)->where('district_id', user_district())->count();
+
+              // $data['districts'] = DB::table('district')->select('id', 'district_name_bn')->where('division_id', user_division())->get();
+
+               $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->where('district_id', user_district())->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+
+
+            $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->where('district_id', user_district())->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+$data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+
+$data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->where('district_id', user_district())->where('court_id', globalUserInfo()->court_id)->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->where('district_id', user_district())->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+            $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->where('court_id', globalUserInfo()->court_id)->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->where('court_id', globalUserInfo()->court_id)->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->where('court_id', globalUserInfo()->court_id)->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+            $data['pending_case_list'] = EmAppeal::orderby('id', 'desc')->whereIn('appeal_status', ['SEND_TO_EM'])->where('court_id', globalUserInfo()->court_id)->count();
+            $data['trial_date_list'] = EmAppeal::orderby('id', 'desc')->where('next_date', date('Y-m-d', strtotime(now())))->where('court_id', globalUserInfo()->court_id)->count();
+            $data['notifications'] = $data['pending_case_list'] + $data['trial_date_list'];
+
+            $data['divisions'] = DB::table('division')->select('id', 'division_name_bn')->get();
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // $data['notifications'] = EmAppeal::orderby('id', 'desc')->whereIn('appeal_status', ['SEND_TO_EM'])->count();
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->courtwisecrpcstatistics($crpc->id));
+            }
+ $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->where('court_id', globalUserInfo()->court_id)->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->where('court_id', globalUserInfo()->court_id)->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->where('court_id', globalUserInfo()->court_id)->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+            $data['pending_case_list'] = EmAppeal::orderby('id', 'desc')->whereIn('appeal_status', ['SEND_TO_EM'])->where('court_id', globalUserInfo()->court_id)->count();
+            $data['trial_date_list'] = EmAppeal::orderby('id', 'desc')->where('next_date', date('Y-m-d', strtotime(now())))->where('court_id', globalUserInfo()->court_id)->count();
+            $data['notifications'] = $data['pending_case_list'] + $data['trial_date_list'];
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // $data['notifications'] = EmAppeal::orderby('id', 'desc')->whereIn('appeal_status', ['SEND_TO_EM'])->count();
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->courtwisecrpcstatistics($crpc->id));
+            }
+
+            $appealHearing = EmCauseList::select('id', 'appeal_id', 'case_decision_id', 'conduct_date', DB::raw('count(*) as total'))
+                ->orderby('id', 'DESC')
+                ->groupBy('conduct_date');
+
+            $data['hearingCalender'] = GccAppealHearingCollection::collection($appealHearing->get());
+
+            // View
+
+
+            elseif ($roleID == 32) {
+            $moujaIDs = $this->get_mouja_by_ulo_office_id(Auth::user()->office_id);
+            // ULAO office
+            // Counter
+            // Counter
+            $$data['total_case'] = EmAppeal::whereNotIn('appeal_status', ['DRAFT'])->count();
+            $data['running_case'] = EmAppeal::where('appeal_status', 'ON_TRIAL')->count();
+            $data['completed_case'] = EmAppeal::where('appeal_status', 'CLOSED')->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->count();
+            $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->count();
+
+            // echo $roleID; exit;
+
+            // Get case status by group
+
+            // dd($data['case_status']);
+
+            $data['page_title'] = 'ড্যাশবোর্ড';
+            return view('dashboard.ulao')->with($data);
+
+        } elseif ($roleID == 33) {
+            // $moujaIDs = $this->get_mouja_by_ulo_office_id(Auth::user()->office_id);
+            // ULAO office
+            // Counter
+            // Counter
+            $data['total_case'] = EmAppeal::where('created_by', $userID)->count();
+            $data['running_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'ON_TRIAL')->count();
+            $data['completed_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'CLOSED')->count();
+            $data['rejected_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'REJECTED')->count();
+            $data['postpond_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'POSTPONED')->count();
+            $data['draft_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'DRAFT')->count();
+
+            $data['CaseWarrentCount'] = DB::table('em_case_shortdecision_templates')
+                ->where('em_case_shortdecision_templates.case_shortdecision_id', '=', 19)
+                ->count();
+
+            $data['CaseInvestigationCount'] = DB::table('em_case_shortdecision_templates')
+                ->where('em_case_shortdecision_templates.case_shortdecision_id', '=', 5)
+                ->count();
+
+            $data['notifications'] = $data['CaseWarrentCount'] + $data['CaseInvestigationCount'];
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+
+            // echo $roleID; exit;
+
+            // Get case status by group
+
+            // dd($data['case_status']);
+
+            $data['page_title'] = 'ড্যাশবোর্ড';
+            return view('dashboard.admin')->with($data);
+
+        } elseif ($roleID == 34) {
+            // Superadmin dashboard
+
+            // Counter
+            $data['total_case'] = EmAppeal::whereNotIn('appeal_status', ['DRAFT'])->count();
+            $data['running_case'] = EmAppeal::whereIn('appeal_status', ['ON_TRIAL', 'SEND_TO_GCO'])->count();
+            $data['completed_case'] = EmAppeal::where('appeal_status', 'CLOSED')->count();
+            $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+
+            $data['pending_case_list'] = EmAppeal::orderby('id', 'desc')->whereIn('appeal_status', ['SEND_TO_DIV_COM'])->count();
+            $data['trial_date_list'] = EmAppeal::orderby('id', 'desc')->where('next_date', date('Y-m-d', strtotime(now())))->where('updated_by', globalUserInfo()->id)->count();
+            $data['notifications'] = $data['pending_case_list'] + $data['trial_date_list'];
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+
+            // View
+            $data['page_title'] = 'ড্যাশবোর্ড';
+            return view('dashboard.admin')->with($data);
+
+        } 
+
+        elseif ($roleID == 25) {
+            // Superadmin dashboard
+
+            // Counter
+            $data['total_case'] = EmAppeal::whereNotIn('appeal_status', ['DRAFT'])->count();
+            $data['running_case'] = EmAppeal::whereIn('appeal_status', ['ON_TRIAL', 'SEND_TO_GCO'])->count();
+            $data['completed_case'] = EmAppeal::where('appeal_status', 'CLOSED')->count();
+            $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+
+            $data['pending_case_list'] = EmAppeal::orderby('id', 'desc')->whereIn('appeal_status', ['SEND_TO_NBR_CM'])->count();
+            $data['trial_date_list'] = EmAppeal::orderby('id', 'desc')->whereIn('appeal_status', ['SEND_TO_NBR_CM'])->where('next_date', date('Y-m-d', strtotime(now())))->count();
+            $data['notifications'] = $data['pending_case_list'] + $data['trial_date_list'];
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+
+            // View
+            $data['page_title'] = 'ড্যাশবোর্ড';
+            return view('dashboard.admin')->with($data);
+
+        }
+
+        elseif ($roleID == 6) {
+            // Superadmin dashboard
+
+            // Counter
+            $data['total_case'] = EmAppeal::whereNotIn('appeal_status', ['DRAFT'])->count();
+            $data['running_case'] = EmAppeal::whereIn('appeal_status', ['ON_TRIAL', 'SEND_TO_GCO'])->count();
+            $data['completed_case'] = EmAppeal::where('appeal_status', 'CLOSED')->count();
+            $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+
+            // View
+            $data['page_title'] = 'ড্যাশবোর্ড';
+            return view('dashboard.admin')->with($data);
+
+        } 
+
+        elseif ($roleID == 14) {
+            // Solicitor
+            // Get case status by group
+            // Counter
+            $data['total_case'] = EmAppeal::whereNotIn('appeal_status', ['DRAFT'])->count();
+            $data['running_case'] = EmAppeal::where('appeal_status', 'ON_TRIAL')->count();
+            $data['completed_case'] = EmAppeal::where('appeal_status', 'CLOSED')->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->count();
+            $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->count();
+
+            // dd($data['case_status']);
+
+            $data['page_title'] = 'আইনজীবীর ড্যাশবোর্ড';
+            return view('dashboard.ulao')->with($data);
+
+        }
+
+        elseif ($roleID == 24) {
+            // Superadmin dashboard
+            // Counter
+            $data['total_case'] = EmAppeal::whereNotIn('appeal_status', ['DRAFT'])->count();
+            $data['running_case'] = EmAppeal::whereIn('appeal_status', ['ON_TRIAL', 'SEND_TO_GCO'])->count();
+            $data['completed_case'] = EmAppeal::where('appeal_status', 'CLOSED')->count();
+            $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+
+            // View
+            $data['page_title'] = 'ড্যাশবোর্ড';
+            return view('dashboard.admin')->with($data);
+
+        }
+
+         $data['draft_case'] = EmAppeal::where('appeal_status', 'DRAFT')->where('district_id', user_district())->count();
+            $data['rejected_case'] = EmAppeal::where('appeal_status', 'REJECTED')->where('district_id', user_district())->count();
+            $data['postpond_case'] = EmAppeal::where('appeal_status', 'POSTPONED')->where('district_id', user_district())->count();
+
+            $data['total_office'] = DB::table('office')->where('is_dm_adm_em', 1)->whereNotIn('id', [1, 2, 7])->where('district_id', user_district())->count();
+            $data['total_user'] = DB::table('users')->count();
+            $data['total_court'] = DB::table('court')->whereNotIn('id', [1, 2])->count();
+            $data['total_mouja'] = DB::table('mouja')->count();
+            $data['total_ct'] = DB::table('case_type')->count();
+
+            // Drildown Statistics
+            $division_list = DB::table('division')
+                ->select('division.id', 'division.division_name_bn', 'division.division_name_en')
+                ->get();
+
+            $divisiondata = array();
+            $districtdata = array();
+            // $dis_data=array();
+            $upazilatdata = array();
+
+            // Division List
+            foreach ($division_list as $division) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['divisiondata'][] = array('name' => $division->division_name_bn, 'y' => $this->get_drildown_case_count($division->id), 'drilldown' => $division->id);
+
+                // District List
+                $district_list = DB::table('district')->select('district.id', 'district.district_name_bn')->where('division_id', $division->id)->get();
+                foreach ($district_list as $district) {
+                    // $dis_count = $this->Employee_model->get_count_employees('', '', '', $district->id);
+                    // $number2 = (int) $dis_count['count']; //exit;
+
+                    $dis_data[$division->id][] = array('name' => $district->district_name_bn, 'y' => $this->get_drildown_case_count('', $district->id), 'drilldown' => $district->id);
+
+                    // Upazila Data
+                    // $upazila_list = $this->Common_model->get_data_where('upazilas', 'district_id', $district->id);
+                    $upazila_list = DB::table('upazila')->select('upazila.id', 'upazila.upazila_name_bn')->where('district_id', $district->id)->get();
+                    foreach ($upazila_list as $upazila) {
+                        // $upa_count = $this->Employee_model->get_count_employees('', '', '', '', $upazila->id);
+                        // $number3 = (int) $upa_count['count']; //exit;
+
+                        $upa_data[$district->id][] = array($upazila->upazila_name_bn, $this->get_drildown_case_count('', '', $upazila->id));
+                    }
+
+                    $upadata = $upa_data[$district->id];
+                    $upazilatdata[] = array('name' => $district->district_name_bn, 'id' => $district->id, 'data' => $upadata);
+                }
+
+                $disdata = $dis_data[$division->id];
+                $districtdata[] = array('name' => $division->division_name_bn, 'id' => $division->id, 'data' => $disdata);
+
+                $data['dis_upa_data'] = array_merge($upazilatdata, $districtdata); //$districtdata;  $upazilatdata;
+
+            }
+            // dd($result);
+            // $data['divisiondata'] = $divisiondata;
+            // dd($data['division_arr']);
+
+            // CRPC Section Statistics
+            $crpc_section_list = DB::table('crpc_sections')
+                ->select('crpc_sections.id', 'crpc_sections.crpc_id', 'crpc_sections.crpc_name')
+                ->get();
+
+            $crpcdata = array();
+            // Division List
+            foreach ($crpc_section_list as $crpc) {
+                // $data_arr[$item->id] = $this->get_drildown_case_count($item->id);
+                // Division Data
+                $data['crpcdata'][] = array('name' => $crpc->crpc_id, 'y' => $this->get_drildown_crpc_case_count($crpc->id));
+            }
+
+            
+            $appealHearing = EmCauseList::select('id', 'appeal_id', 'case_decision_id', 'conduct_date', DB::raw('count(*) as total'))
+                ->orderby('id', 'DESC')
+                ->groupBy('conduct_date');
+
+            $data['hearingCalender'] = GccAppealHearingCollection::collection($appealHearing->get());
+
+
+
+            // $data['pending_review_case'] = EmAppeal::whereIn('appeal_status', ['SEND_TO_DM_REVIEW'])
+            //     ->where(function ($query) {
+            //         $query->where('review_applied_by', globalUserInfo()->id)
+            //             ->orWhere('created_by', globalUserInfo()->id);
+            //     })
+            //     ->count();
+
+            // /*->where('review_applied_by', globalUserInfo()->id)->orWhere('created_by', globalUserInfo()->id)*/
+
+            // $data['running_review_case'] = EmAppeal::whereIn('appeal_status', ['ON_TRIAL_DM'])->where('is_applied_for_review', 1)->where(function ($query) {
+            //     $query->where('review_applied_by', globalUserInfo()->id)
+            //         ->orWhere('created_by', globalUserInfo()->id);
+            // })
+            //     ->count();
+
+            // ->where('review_applied_by', globalUserInfo()->id)->orWhere('created_by', globalUserInfo()->id)->count();
+            // $data['running_case'] = EmAppeal::where('created_by', $userID)->whereIn('appeal_status', ['ON_TRIAL','ON_TRIAL_DM'])->count();
+            // $data['completed_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'CLOSED')->count();
+            // $data['draft_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'DRAFT')->count();
+            // $data['rejected_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'REJECTED')->count();
+            // $data['postpond_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'POSTPONED')->count();
+
+             $data['pending_review_case'] = EmAppeal::whereIn('appeal_status', ['SEND_TO_DM_REVIEW'])
+                ->orWhere(function ($query) {
+                    $query->where('review_applied_by', globalUserInfo()->id)
+                        ->where('created_by', globalUserInfo()->id);
+                })
+                ->count();
+
+            /*->where('review_applied_by', globalUserInfo()->id)->orWhere('created_by', globalUserInfo()->id)*/
+
+            $data['running_review_case'] = EmAppeal::whereIn('appeal_status', ['ON_TRIAL_DM'])->where('is_applied_for_review', 1)->orWhere(function ($query) {
+                $query->where('review_applied_by', globalUserInfo()->id)
+                    ->where('created_by', globalUserInfo()->id);
+            })
+                ->count();
+
+            // ->where('review_applied_by', globalUserInfo()->id)->orWhere('created_by', globalUserInfo()->id)->count();
+            // $data['running_case'] = EmAppeal::where('created_by', $userID)->whereIn('appeal_status', ['ON_TRIAL','ON_TRIAL_DM'])->count();
+            // $data['completed_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'CLOSED')->count();
+            $data['draft_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'DRAFT')->count();
+            $data['rejected_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'REJECTED')->count();
+            $data['postpond_case'] = EmAppeal::where('created_by', $userID)->where('appeal_status', 'POSTPONED')->count();

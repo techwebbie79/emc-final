@@ -1,0 +1,296 @@
+.header-fixed.subheader-fixed.subheader-enabled .wrapper {
+    padding: 65px;
+}
+
+@font-face {
+    font-family: 'Kalpurush';
+    src: url('../fonts/Kalpurush.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nikosh';
+    src: url('../fonts/Nikosh.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body,
+html {
+    font-family: 'Kalpurush', Poppins, Helvetica, sans-serif;
+    font-size: 14px!important;
+}
+
+::-webkit-input-placeholder {
+    font-size: 25px !important;
+}
+
+ :-moz-placeholder {
+    /* Firefox 18- */
+    font-size: 25px !important;
+}
+
+ ::-moz-placeholder {
+    /* Firefox 19+ */
+    font-size: 25px !important;
+}
+
+
+/* Overriding styles */
+
+ ::-webkit-input-placeholder {
+    font-size: 13px!important;
+}
+
+ :-moz-placeholder {
+    /* Firefox 18- */
+    font-size: 13px!important;
+}
+
+ ::-moz-placeholder {
+    /* Firefox 19+ */
+    font-size: 13px!important;
+}
+
+
+/*====== custom css =========*/
+
+div#piechart_3d {
+    position: absolute;
+    top: 68px;
+    left: -39px;
+}
+
+
+
+
+
+
+
+
+
+
+/*================================================== landing page ===================*/
+
+
+
+.header-fixed.subheader-fixed.subheader-enabled .wrapper {
+    padding: 65px;
+}
+
+@font-face {
+    font-family: 'Kalpurush';
+    src: url('../fonts/Kalpurush.html') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Nikosh';
+    src: url('../fonts/Nikosh.html') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body,
+html {
+    font-family: 'Kalpurush', Poppins, Helvetica, sans-serif;
+    font-size: 14px!important;
+}
+
+::-webkit-input-placeholder {
+    font-size: 25px !important;
+}
+
+ :-moz-placeholder {
+    /* Firefox 18- */
+    font-size: 25px !important;
+}
+
+ ::-moz-placeholder {
+    /* Firefox 19+ */
+    font-size: 25px !important;
+}
+
+
+/* Overriding styles */
+
+ ::-webkit-input-placeholder {
+    font-size: 13px!important;
+}
+
+ :-moz-placeholder {
+    /* Firefox 18- */
+    font-size: 13px!important;
+}
+
+ ::-moz-placeholder {
+    /* Firefox 19+ */
+    font-size: 13px!important;
+}
+
+
+/*=====================*/
+
+.landing_banner {
+    width: 100%;
+    position: relative;
+    padding-bottom: 80px;
+}
+
+.banner-bg {
+    height: 400px;
+}
+
+
+.banner-bg>img {
+    height: 100%;
+    width: 100%;
+}
+
+
+.bcard-img>img {
+    width: 60%;
+    height: 46px;
+}
+.col-lg-4.right_h_border {
+    position: relative;
+}
+
+
+.banner-text {
+    position: absolute;
+    top: 115px;
+    left: 10%;
+    margin-right: 20px;
+}
+
+.banner-text>h3 {
+    padding: 10px 17px;
+    font-size: 24px;
+    margin: 0;
+    border-radius: 8px;
+    background: linear-gradient(90deg, rgba(22,215,197,1) 0%, rgba(23,215,197,0.5494572829131652) 100%);
+}
+
+.banner-text>h3>span {
+    color: white;
+}
+.header-left-logo>img {
+    width: 55px;
+}
+
+.header-left-logo>span {
+    font-size: 26px;
+    padding-top: 9px;
+    padding-left: 10px;
+    font-weight: 600;
+    color: #6B2D8D;
+}
+
+.header-left-logo {
+    display: contents;
+}
+
+div#kt_quick_user_toggle>img {
+    margin-top: 11px;
+}
+
+
+
+
+
+
+
+
+/*landing page resposive*/
+
+@media (min-width: 250px) and (max-width: 991px) {
+    .banner_card_items>div {
+        padding: 15px 0;
+    }
+
+    .card-custom.mb-8.mb-lg-0 {
+        margin-bottom: 0px !important;
+    }
+    .col-lg-4.right_h_border::before {
+        position: absolute;
+        width: 70%;
+        height: 3px;
+        background: #ddd;
+        content: "";
+        left: 17%;
+        bottom: 0px;
+    }
+    div#kt_banner_content {
+        padding-bottom: 500px;
+    }
+}
+
+
+
+@media (min-width: 992px) {
+    .col-lg-4.right_h_border::before {
+        position: absolute;
+        width: 3px;
+        height: 124px;
+        right: 0px;
+        background: #ddd;
+        content: "";
+        top: 29px;
+    }
+    div#kt_banner_content {
+        padding-bottom: 100px;
+    }
+}
+
+@media (max-width: 600px) {
+    .banner_card {
+        position: absolute;
+        top: 300px;
+        left: 0;
+        width: 100%;
+        padding: 0px 40px;
+    }
+}
+
+
+@media (min-width: 601px) {
+    .banner_card {
+        position: absolute;
+        top: 300px;
+        left: 0;
+        width: 100%;
+        padding: 0px 100px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

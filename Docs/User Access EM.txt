@@ -1,0 +1,36 @@
+Citizen (36):
+User: shourav@gmail.com
+Pass: 12345678
+
+Officer Incharge Poilce (33):
+User: oc.mirpur@police.gov.bd		
+Pass: 12345678
+
+EM (27):
+User: em.dhaka@gmail.com
+Pass: 12345678
+
+EM 2 (27):
+User: waliur@gmail.com
+Pass: 12345678
+
+Asst. EM (28):
+User: asst.em.dhaka@gmail.com
+Pass: 12345678
+
+ADM (38):
+User: adm.dhaka@gmail.com
+Pass: 12345678
+
+DM (37):
+User: dm.dhaka@gmail.com
+Pass: 12345678
+
+DM (doptor)(37):
+User: 100000006515
+Pass: 02522016
+
+Superadmin (2):
+User: admin@a2i.gov.bd
+Pass: 12345678
+

@@ -1,0 +1,327 @@
+<!doctype>
+<html>
+<head>
+  <title>jsPDF</title>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <!-- <link rel="stylesheet" type="text/css" href="css/smoothness/jquery-ui-1.8.17.custom.css"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="css/main.css"> -->
+
+  <script type="text/javascript" src="js/jquery/jquery-1.7.1.min.js"></script>
+  <!-- <script type="text/javascript" src="js/jquery/jquery-ui-1.8.17.custom.min.js"></script> -->
+  <script type="text/javascript" src="../dist/jspdf.debug.js"></script>
+  <script src='../libs/html2pdf.js'></script>
+  <!-- <script type="text/javascript" src="js/basic.js"></script> -->
+
+  <style type="text/css">
+    
+  </style>
+
+</head>
+
+<body>
+
+  <h1>jsPDF Demos</h1>
+  <div>Welcome</div>
+  <div id="fromHTMLtestdiv">
+    <h1>Ordered And Unordered Lists</h1>
+    <h2>Implemented</h2>
+    <div>Hello</div>
+    <ol>
+      <li>OL Item (default)</li>
+      <li style='list-style-type: decimal'>OL Item (decimal)</li>
+      <li style='list-style-type: upper-alpha'>OL Item (upper-alpha)</li>
+      <li style='list-style-type: lower-alpha'>OL Item (lower-alpha)</li>
+      <li style='list-style-type: upper-roman'>OL Item (upper-roman)</li>
+      <li style='list-style-type: lower-roman'>OL Item (lower-roman)</li>
+      <li style='list-style-type: none'>OL Item (none)</li>
+    </ol>
+    <ul>
+      <li>UL Item (default)</li>
+      <li style='list-style-type: circle'>UL Item (circle)</li>
+      <li style='list-style-type: square'>UL Item (square)</li>
+      <li style='list-style-type: disc'>UL Item (disc)</li>
+      <li style='list-style-type: none'>OL Item (none)</li>
+    </ul>
+
+    <h2>Not Implemented</h2>
+    <pre>
+      upper-latin
+      lower-latin
+      armenian
+      cjk-ideographic
+      decimal-leading-zero
+      georgian
+      hebrew
+      hiragana
+      hiragana-iroha
+      katakana
+      katakana-iroha
+    </pre>
+
+    <img src="images/24_bit.png">
+
+
+    <div style=''>
+      <h1>Autobreak</h1>
+      <p>The context2d plugin was tweaked to auto-break a document into multiple pages.</p>
+      <p>The auto-page-break feature allows vertical positioning by addressing the Y coordinate beyond the PDF page.</p>
+      <p>
+        Note: <em>There is a margin bug that causes an item to not draw in the break.</em>
+      </p>
+      <ol>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+        <li>OL Item</li>
+      </ol>
+    </div>
+
+
+
+
+    <div>
+      <h1>Tables</h1>
+      <table class='table1'>
+        <tr>
+          <td>Item</td>
+          <td>Cost</td>
+          <td>Description</td>
+          <td>Available</td>
+        </tr>
+        <tr>
+          <td>Milk</td>
+          <td>$1.00</td>
+          <td>Hello PDF World</td>
+          <td>Out Of Stock</td>
+        </tr>
+        <tr>
+          <td>Milk</td>
+          <td>$1.00</td>
+          <td>Hello PDF World</td>
+          <td>Out Of Stock</td>
+        </tr>
+      </table>
+      <table class='table2'>
+        <tr>
+          <td>Item</td>
+          <td>Cost</td>
+          <td>Description</td>
+          <td>Available</td>
+        </tr>
+        <tr>
+          <td>Milk</td>
+          <td>$1.00</td>
+          <td>Hello PDF World</td>
+          <td>Out Of Stock</td>
+        </tr>
+        <tr>
+          <td>Milk</td>
+          <td>$1.00</td>
+          <td>Hello PDF World</td>
+          <td>Out Of Stock</td>
+        </tr>
+      </table>
+
+      <table class='CSSTableGenerator'>
+        <tr>
+          <td>Item</td>
+          <td>Cost</td>
+          <td>Description</td>
+          <td>Available</td>
+        </tr>
+        <tr>
+          <td>Milk</td>
+          <td>$1.00</td>
+          <td>Hello PDF World</td>
+          <td>Out Of Stock</td>
+        </tr>
+        <tr>
+          <td>Milk</td>
+          <td>$1.00</td>
+          <td>Hello PDF World</td>
+          <td>Out Of Stock</td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+
+
+  <div>
+    <p>
+      <a href="javascript:demoFromHTML()" class="button">Generate PDF</a>
+    </p>
+  </div>
+
+  <script type="text/javascript">
+    
+    function demoFromHTML() {
+  var pdf = new jsPDF('p', 'pt', 'letter')
+
+  // source can be HTML-formatted string, or a reference
+  // to an actual DOM element from which the text will be scraped.
+  , source = $('#fromHTMLtestdiv')[0]
+
+  // we support special element handlers. Register them with jQuery-style 
+  // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+  // There is no support for any other type of selectors 
+  // (class, of compound) at this time.
+  , specialElementHandlers = {
+    // element with id of "bypass" - jQuery style selector
+    '#bypassme': function(element, renderer){
+      // true = "handled elsewhere, bypass text extraction"
+      return true
+    }
+  }
+
+  margins = {
+      top: 80,
+      bottom: 60,
+      left: 40,
+      width: 522
+    };
+    // all coords and widths are in jsPDF instance's declared units
+    // 'inches' in this case
+    pdf.fromHTML(
+      source // HTML string or DOM elem ref.
+      , margins.left // x coord
+      , margins.top // y coord
+      , {
+        'width': margins.width // max width of content on PDF
+        , 'elementHandlers': specialElementHandlers
+      },
+      function (dispose) {
+        // dispose: object with X, Y of the last line add to the PDF 
+        //          this allow the insertion of new lines after html
+          pdf.save('Test.pdf');
+        },
+      margins
+    )
+}
+  </script>
+
+</body>
+</html>

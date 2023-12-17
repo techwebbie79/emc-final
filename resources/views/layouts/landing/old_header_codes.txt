@@ -1,0 +1,61 @@
+elseif ($roleID == 25) {
+        $total_pending_case = App\Models\ App\Models\EmAppeal::orderby('id', 'desc')
+            ->whereIn('appeal_status', ['SEND_TO_NBR_CM'])
+            ->count();
+        $CaseTrialCount = App\Models\ App\Models\EmAppeal::orderby('id', 'desc')
+            ->where('next_date', date('Y-m-d', strtotime(now())))
+            ->where('updated_by', globalUserInfo()->id)
+            ->count();
+
+        // dd($dfsdf);
+
+        $notification_count = $CaseTrialCount + $total_pending_case;
+    }
+    elseif ($roleID == 34) {
+        $total_pending_case = App\Models\ App\Models\EmAppeal::orderby('id', 'desc')
+            ->whereIn('appeal_status', ['SEND_TO_DIV_COM'])
+            ->count();
+        $CaseTrialCount = App\Models\ App\Models\EmAppeal::orderby('id', 'desc')
+            ->where('next_date', date('Y-m-d', strtotime(now())))
+            ->where('updated_by', globalUserInfo()->id)
+            ->count();
+
+        // dd($dfsdf);
+
+        $notification_count = $CaseTrialCount + $total_pending_case;
+    } elseif ($roleID == 32) {
+        $CaseCrockCount = DB::table('em_case_shortdecision_templates')
+            ->where('em_case_shortdecision_templates.case_shortdecision_id', '=', 9)
+            ->count();
+
+        $notification_count = $CaseCrockCount;
+    } elseif ($roleID == 33) {
+        $CaseWarrentCount = DB::table('em_case_shortdecision_templates')
+            ->where('em_case_shortdecision_templates.case_shortdecision_id', '=', 19)
+            ->count();
+
+        $CaseInvestigationCount = DB::table('em_case_shortdecision_templates')
+            ->where('em_case_shortdecision_templates.case_shortdecision_id', '=', 5)
+            ->count();
+
+        $notification_count = $CaseWarrentCount;
+    }
+    elseif ($roleID == 35) {
+        $CaseTrialCount = App\Models\ App\Models\EmAppeal::orderby('id', 'desc')
+            ->where('next_date', date('Y-m-d', strtotime(now())))
+            ->where('created_by', globalUserInfo()->id)
+            ->count();
+
+        $notification_count = $CaseTrialCount;
+    }
+    elseif ($roleID == 32) {
+        $notification_count = $notification_count;
+        $CaseCrockCount = $CaseCrockCount;
+    } elseif ($roleID == 33) {
+        $notification_count = $notification_count;
+        $CaseWarrentCount = $CaseWarrentCount;
+        $CaseInvestigationCount = $CaseInvestigationCount;
+    } elseif ($roleID == 35) {
+        $notification_count = $notification_count;
+        $CaseTrialCount = $CaseTrialCount;
+    }

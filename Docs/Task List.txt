@@ -1,0 +1,48 @@
+Task List 
+
+Dashboard & Reporting (Moatafa Vai)
+EM Case Mapping & DM panel(Thouhid Vai)
+Wizard form design, Wizard form varilation, Wizard form submit.(Shahajahan Vai)
+Dependable order on Crpc Sec(Khalid).
+
+Thouhid Vai
+[
+	EM project
+	{
+		1.ADM and EM Create and Update
+		2.EM case mapping
+	}
+] 
+Shahajahan Vai	
+[
+	GCC project
+	{
+		1.Wizard form design
+		2.Wizard form validation
+		3.Wizard form submit
+	}
+]
+Khalid
+[
+	EM project
+	{
+		1.Short order dicision dynamically by crpc section
+		2.Short order dicision template design and implement
+		3.Causelist according to judiciary
+		4.Regular Feedbacks From a2i
+	}
+	GCC project
+	{
+		1.Khari Abedon With Template
+		2.Regular Feedbacks From a2i
+	}
+]
+Mostafa Vai
+[
+	EM project
+	{
+		1.Dashboard design with statistics
+		2.Report module
+		3.Regular Feedbacks From a2i
+	}
+]
